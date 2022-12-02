@@ -1,0 +1,58 @@
+
+%%
+#include &quot;lex.yy.c&quot;
+#include&lt;stdio.h&gt;
+
+char st[100][10];
+int top=0;
+char temp[3]=&quot;t0&quot;;
+main()
+{
+printf(&quot;Enter the expression : &quot;);
+yyparse();
+}
+
+push()
+{
+strcpy(st[++top],yytext);
+}
+
+codegen()
+{
+printf(&quot;%s = %s %s %s\n&quot;, temp, st[top-2], st[top-1],st[top]);
+top-=2;
+strcpy(st[top],temp);
+temp[1]++;
+}
+
+codegen_umin()
+{
+printf(&quot;%s = -%s\n&quot;, temp, st[top]);
+top--;
+strcpy(st[top],temp);
+temp[1]++;
+
+}
+codegen_assign()
+{
+printf(&quot;%s = %s\n&quot;, st[top-2],st[top]);
+top-=2;
+}
+
+L1(0)
+{
+printf(&quot;\nL1: \n&quot;);
+}
+
+Lcond()
+{
+printf(&quot;%s = not %s\n&quot;, temp,st[top]);
+printf(&quot;if %s goto End\n&quot;, temp);
+temp[1]++;
+}
+
+End()
+{
+printf(&quot;goto L1\n&quot;);
+printf(&quot;End: end of while loop \n\n&quot;);
+}
